@@ -1714,7 +1714,7 @@ function renderGonggao(){
         html+='<div class="gg-row">';
         // Edit & delete buttons
         html+='<button class="gg-btn gg-btn-edit" onclick="event.stopPropagation();editGonggao('+g.id+')" title="编辑">✏️</button>';
-        html+='<button class="gg-btn gg-btn-del" onclick="event.stopPropagation();delGonggaoInline('+g.id+')" title="删除">🗑</button>';;
+        html+='<button class="gg-btn gg-btn-del" onclick="event.stopPropagation();delGonggaoInline('+g.id+')" title="删除">🗑</button>';
         html+='<span class="gg-item-name">'+g.item+'</span>';
         if(g.note==='公司单') html+='<span class="gg-corp">公司单</span>';
         else if(g.note) html+='<span class="gg-note">'+g.note+'</span>';
