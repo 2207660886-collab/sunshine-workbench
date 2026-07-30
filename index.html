@@ -380,6 +380,11 @@ body{padding-top:var(--safeTop)}
 .mtab{cursor:pointer;-webkit-tap-highlight-color:transparent;padding:14px 8px;min-height:44px;display:flex;align-items:center;justify-content:center}
 
 
+/* ── 通告工作 — 行内按钮 ── */
+.gg-btn{width:28px;height:28px;border-radius:8px;border:none;background:#f5f0ea;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
+.gg-btn-edit:hover{background:#e8d4bc}
+.gg-btn-del:hover{background:#ffcdd2}
+.gg-row{display:flex;align-items:center;gap:6px;padding:8px 10px;margin:2px 0;border-radius:10px;transition:.15s;font-size:12px;flex-wrap:wrap}
 /* ── 通告工作 ── */
 .gg-month{margin:0 12px 16px;background:var(--cardBg);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .gg-month-hd{font-size:15px;font-weight:700;color:var(--brown);margin:0 0 12px;padding-bottom:8px;border-bottom:1px dashed var(--border);display:flex;align-items:center;gap:6px}
@@ -1364,7 +1369,10 @@ function cycleProjectStatus(id){
   p.status=order[(idx+1)%3];
   save();renderProjects();
 }
-function closePjModal(){var m=document.getElementById("pjModal");if(m)m.remove()}
+function closePjModal(){
+  var m=document.getElementById("pjModal");if(m)m.remove();
+  var g=document.getElementById("ggModal");if(g)g.remove();
+}
 function delProject(id){
   if(!confirm('确定删除？'))return;
   S.projects=S.projects.filter(function(p){return p.id!==id});
@@ -1687,10 +1695,12 @@ function renderGonggao(){
     html+='<span style="flex:1"></span>';
     html+='<span class="gg-month-stat">'+monthCount+'个项目</span>';
     if(monthTotal>0){
-      html+='<span class="gg-month-stat">报价¥'+monthTotal.toLocaleString()+'</span>';
-      if(monthNet>0&&monthNet<monthTotal) html+='<span class="gg-month-stat" style="color:#2e7d32">到手¥'+monthNet.toLocaleString()+'</span>';
-      else if(monthNet>0) html+='<span class="gg-month-stat" style="color:#2e7d32">¥'+monthNet.toLocaleString()+'</span>';
+      var monthRebate=monthTotal-monthNet;
+      html+='<span class="gg-month-stat" style="color:#e65100;font-weight:700">报价¥'+monthTotal.toLocaleString()+'</span>';
+      if(monthNet<monthTotal&&monthNet>0) html+='<span class="gg-month-stat" style="color:#2e7d32;font-weight:700">到手¥'+monthNet.toLocaleString()+' <small>(扣¥'+monthRebate.toLocaleString()+')</small></span>';
+      else if(monthNet>0) html+='<span class="gg-month-stat" style="color:#2e7d32;font-weight:700">¥'+monthNet.toLocaleString()+'</span>';
     }
+    html+='<button class="btn btn-p" style="font-size:11px;padding:4px 12px;margin-top:8px;width:100%" onclick="addGonggaoForMonth(\''+m+'\')">＋添加通告</button>';
     html+='</div>';
 
     keys.forEach(function(a){
@@ -1701,7 +1711,10 @@ function renderGonggao(){
       html+='</div><div class="gg-items">';
 
       acc.items.forEach(function(g){
-        html+='<div class="gg-row" onclick="editGonggao('+g.id+')">';
+        html+='<div class="gg-row">';
+        // Edit & delete buttons
+        html+='<button class="gg-btn gg-btn-edit" onclick="event.stopPropagation();editGonggao('+g.id+')" title="编辑">✏️</button>';
+        html+='<button class="gg-btn gg-btn-del" onclick="event.stopPropagation();delGonggaoInline('+g.id+')" title="删除">🗑</button>';;
         html+='<span class="gg-item-name">'+g.item+'</span>';
         if(g.note==='公司单') html+='<span class="gg-corp">公司单</span>';
         else if(g.note) html+='<span class="gg-note">'+g.note+'</span>';
@@ -1722,6 +1735,15 @@ function renderGonggao(){
     html+='</div>';
   });
   document.getElementById('ggList').innerHTML=html||'<div style="text-align:center;padding:40px;color:var(--textM)">暂无通告</div>';
+}
+
+function addGonggaoForMonth(targetMonth){
+  addGonggaoItem();
+  // Pre-select the month
+  setTimeout(function(){
+    var sel=document.getElementById('ggMonth');
+    if(sel) sel.value=targetMonth;
+  },50);
 }
 
 function addGonggaoItem(){
