@@ -1,2 +1,3 @@
-# sunshine-workbench
-SUNSHINE 个人工作台
+# ☀️ SUNSHINE 工作台
+
+伊姐专属个人工作台。待办、英语学习、自媒体管理、灵感搜集，一个页面全搞定。
