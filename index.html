@@ -1807,6 +1807,19 @@ function delGonggao(id){
   save();renderGonggao();closePjModal();
 }
 
+// ─── 账号每月默认单价 ───
+function setAccountPrice(month,account){
+  var key=month+':'+account;
+  var cur=S.ggAccountPrices[key]||'';
+  var label=account+' → '+monthLabel(month);
+  var val=prompt(label+'\n\n设置默认单价（该账号本月新增项目自动填入）：\n留空则清除',cur);
+  if(val===null)return;
+  val=val.trim();
+  if(val===''){delete S.ggAccountPrices[key];}
+  else{var n=parseFloat(val);if(isNaN(n)||n<=0){alert('请输入有效金额');return;}S.ggAccountPrices[key]=n;}
+  save();renderGonggao();
+}
+
 
 // ── 每日爆款选题 ──
 var TRENDING_XHS=[
